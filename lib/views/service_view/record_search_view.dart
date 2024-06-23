@@ -47,339 +47,341 @@ class _RecordSearchViewState extends State<RecordSearchView> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: BlocProvider(
-        create: (context) => AppCubit()..availableCourses,
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text(
-              "تسجيل النقطة البحثية",
-              style: TextStyle(
-                fontSize: 22.0,
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
+        create: (context) => AppCubit(),
+        child: BlocConsumer<AppCubit, AppStates>(
+          listenWhen: (previous, current) => current is MakeReportLoading ||
+              current is MakeReportSuccess||
+              current is MakeReportError,
+          listener: (context, state) {
+            if(state is MakeReportLoading) {
+              showDialog(context: context, builder: (context) => const Center(
+                child: CircularProgressIndicator(color: Colors.blue,),
+              ),);
+            } if (state is MakeReportSuccess) {
+              Navigator.of(context).pop();
+              Fluttertoast.showToast(
+                msg: "تم تسجيل نقطة البحث",
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.SNACKBAR,
+                backgroundColor: Colors.green,
+                textColor: Colors.white,
+                fontSize: 16.0,
+              );
+            }if (state is MakeReportError)
+            {
+              Navigator.of(context).pop();
+              Fluttertoast.showToast(
+                msg: 'حدث خطأ ما حاول في وقت لاحق',
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.CENTER,
+                backgroundColor: Colors.red,
+              );}
+          },
+          builder: (context, state) {
+            return  Scaffold(
+              appBar: AppBar(
+                title: const Text(
+                  "تسجيل النقطة البحثية",
+                  style: TextStyle(
+                    fontSize: 22.0,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
+                ),
+                centerTitle: true,
+                backgroundColor: const Color(0XFF57B4D7),
+                leading: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Colors.white,
+                  ),
+                ),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(20),
+                  ),
+                ),
               ),
-            ),
-            centerTitle: true,
-            backgroundColor: const Color(0XFF57B4D7),
-            leading: IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(
-                Icons.arrow_back_ios_new,
-                color: Colors.white,
-              ),
-            ),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                bottomRight: Radius.circular(20),
-                bottomLeft: Radius.circular(20),
-              ),
-            ),
-          ),
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 12.0),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+              body: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 12.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "السيد الأستاذ الدكتور/ رئيس قسم",
+                      Row(
+                        children: [
+                          const Text(
+                            "السيد الأستاذ الدكتور/ رئيس قسم",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18.0,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          DropdownButtonHideUnderline(
+                            child: DropdownButton2<String>(
+                              isExpanded: true,
+                              items: deItems
+                                  .map((String item) => DropdownMenuItem<String>(
+                                value: item,
+                                child: Text(
+                                  item,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ))
+                                  .toList(),
+                              value: selectedValue,
+                              onChanged: (String? value) {
+                                setState(() {
+                                  selectedValue = value;
+                                });
+                              },
+                              buttonStyleData: const ButtonStyleData(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                height: 40,
+                                width: 90,
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        "تحية طيبة وبعد،،\nأرجو من سيادتكم التكرم بالموافقة علي :",
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.0,
                         ),
                       ),
-                      const SizedBox(width: 10),
                       DropdownButtonHideUnderline(
                         child: DropdownButton2<String>(
                           isExpanded: true,
-                          items: deItems
+                          items: items
                               .map((String item) => DropdownMenuItem<String>(
-                                    value: item,
-                                    child: Text(
-                                      item,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ))
+                            value: item,
+                            child: Text(
+                              item,
+                              style: const TextStyle(
+                                fontSize: 14,
+                              ),
+                            ),
+                          ))
                               .toList(),
-                          value: selectedValue,
+                          value: selectedTypeValue,
                           onChanged: (String? value) {
                             setState(() {
-                              selectedValue = value;
+                              selectedTypeValue = value;
                             });
                           },
                           buttonStyleData: const ButtonStyleData(
                             padding: EdgeInsets.symmetric(horizontal: 16),
-                            height: 40,
-                            width: 90,
+                            height: 60,
+                            width: 150,
                           ),
                           menuItemStyleData: const MenuItemStyleData(
                             height: 40,
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                   Text(
-                   "تحية طيبة وبعد،،\nأرجو من سيادتكم التكرم بالموافقة علي :",
-                   style: TextStyle(
-                     fontWeight: FontWeight.w500,
-                     fontSize: 18.0,
-                   ),
-                   ),
-                   DropdownButtonHideUnderline(
-                     child: DropdownButton2<String>(
-                       isExpanded: true,
-                       items: items
-                           .map((String item) => DropdownMenuItem<String>(
-                         value: item,
-                         child: Text(
-                           item,
-                           style: const TextStyle(
-                             fontSize: 14,
-                           ),
-                         ),
-                       ))
-                           .toList(),
-                       value: selectedTypeValue,
-                       onChanged: (String? value) {
-                         setState(() {
-                           selectedTypeValue = value;
-                         });
-                       },
-                       buttonStyleData: const ButtonStyleData(
-                         padding: EdgeInsets.symmetric(horizontal: 16),
-                         height: 60,
-                         width: 150,
-                       ),
-                       menuItemStyleData: const MenuItemStyleData(
-                         height: 40,
-                       ),
-                     ),
-                   ),
-                  const SizedBox(height: 8.0),
-                  Row(
-                    children: [
+                      const SizedBox(height: 8.0),
+                      Row(
+                        children: [
+                          const Text(
+                            "للطالب",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18.0,
+                            ),
+                          ),
+                          const SizedBox(width: 6.0),
+                          Expanded(
+                            child: SizedBox(
+                              height: 40.0,
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        borderSide: const BorderSide(
+                                          color: Colors.black45,
+                                        )),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        borderSide: const BorderSide(
+                                          color: Color(0XFF57B4D7),
+                                        )),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 4.0, horizontal: 16.0)),
+                                controller: _nameController,
+                                textInputAction: TextInputAction.done,
+                                validator: (value) {
+                                  return null;
+                                },
+                                keyboardType: TextInputType.name,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Text(
+                            "المقيد بالقسم التخصصي",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18.0,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          DropdownButtonHideUnderline(
+                            child: DropdownButton2<String>(
+                              isExpanded: true,
+                              items: deItems
+                                  .map((String item) => DropdownMenuItem<String>(
+                                value: item,
+                                child: Text(
+                                  item,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ))
+                                  .toList(),
+                              value: selectedValue,
+                              onChanged: (String? value) {
+                                setState(() {
+                                  selectedValue = value;
+                                });
+                              },
+                              buttonStyleData: const ButtonStyleData(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                height: 40,
+                                width: 90,
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                       const Text(
-                        "للطالب",
+                        "عنوان الرسالة باللغة العربية :",
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.0,
                         ),
                       ),
-                      const SizedBox(width: 6.0),
-                      Expanded(
-                        child: SizedBox(
-                          height: 40.0,
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    borderSide: const BorderSide(
-                                      color: Colors.black45,
-                                    )),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    borderSide: const BorderSide(
-                                      color: Color(0XFF57B4D7),
-                                    )),
-                                contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 4.0, horizontal: 16.0)),
-                            controller: _nameController,
-                            textInputAction: TextInputAction.done,
-                            validator: (value) {
-                              return null;
-                            },
-                            keyboardType: TextInputType.name,
+                      TextFormField(
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: const BorderSide(
+                              color: Colors.black45,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: const BorderSide(
+                              color: Color(0XFF57B4D7),
+                            ),
                           ),
                         ),
+                        maxLines: 7,
+                        minLines: 4,
+                        controller: _subjectArController,
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          return null;
+                        },
+                        keyboardType: TextInputType.text,
                       ),
-                    ],
-                  ),
-                  Row(
-                    children: [
+                      const SizedBox(height: 8.0),
                       const Text(
-                        "المقيد بالقسم التخصصي",
+                        "عنوان الرسالة باللغة الانجليزيه :",
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.0,
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      DropdownButtonHideUnderline(
-                        child: DropdownButton2<String>(
-                          isExpanded: true,
-                          items: deItems
-                              .map((String item) => DropdownMenuItem<String>(
-                                    value: item,
-                                    child: Text(
-                                      item,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ))
-                              .toList(),
-                          value: selectedValue,
-                          onChanged: (String? value) {
-                            setState(() {
-                              selectedValue = value;
-                            });
-                          },
-                          buttonStyleData: const ButtonStyleData(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            height: 40,
-                            width: 90,
+                      TextFormField(
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: const BorderSide(
+                              color: Colors.black45,
+                            ),
                           ),
-                          menuItemStyleData: const MenuItemStyleData(
-                            height: 40,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: const BorderSide(
+                              color: Color(0XFF57B4D7),
+                            ),
                           ),
                         ),
+                        maxLines: 7,
+                        minLines: 4,
+                        controller: _subjectEnController,
+                        textInputAction: TextInputAction.done,
+                        validator: (value) {
+                          return null;
+                        },
+                        keyboardType: TextInputType.text,
                       ),
-                    ],
-                  ),
-                  const Text(
-                    "عنوان الرسالة باللغة العربية :",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 18.0,
-                    ),
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: const BorderSide(
-                          color: Colors.black45,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: const BorderSide(
-                          color: Color(0XFF57B4D7),
-                        ),
-                      ),
-                    ),
-                    maxLines: 7,
-                    minLines: 4,
-                    controller: _subjectArController,
-                    textInputAction: TextInputAction.next,
-                    validator: (value) {
-                      return null;
-                    },
-                    keyboardType: TextInputType.text,
-                  ),
-                  const SizedBox(height: 8.0),
-                  const Text(
-                    "عنوان الرسالة باللغة الانجليزيه :",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 18.0,
-                    ),
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: const BorderSide(
-                          color: Colors.black45,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: const BorderSide(
-                          color: Color(0XFF57B4D7),
-                        ),
-                      ),
-                    ),
-                    maxLines: 7,
-                    minLines: 4,
-                    controller: _subjectEnController,
-                    textInputAction: TextInputAction.done,
-                    validator: (value) {
-                      return null;
-                    },
-                    keyboardType: TextInputType.text,
-                  ),
-                  const SizedBox(height: 8.0),
-                  const Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "وتفضلوا بقبول وافر الشكر والتقدير،،،",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18.0,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 18.0),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: BlocListener<AppCubit, AppStates>(
-                      listenWhen: (previous, current) => current is MakeReportLoading ||
-                          current is MakeReportSuccess||
-                          current is MakeReportError,
-                      listener: (context, state) {
-                        if(state is MakeReportLoading) {
-                          showDialog(context: context, builder: (context) => const Center(
-                            child: CircularProgressIndicator(color: Colors.blue,),
-                          ),);
-                        } if (state is MakeReportSuccess) {
-                          Navigator.of(context).pop();
-                          Fluttertoast.showToast(
-                            msg: "تم تسجيل نقطة البحث",
-                            toastLength: Toast.LENGTH_LONG,
-                            gravity: ToastGravity.SNACKBAR,
-                            backgroundColor: Colors.green,
-                            textColor: Colors.white,
-                            fontSize: 16.0,
-                          );
-                        }if (state is MakeReportError)
-                        {
-                          Navigator.of(context).pop();
-                          Fluttertoast.showToast(
-                            msg: 'حدث خطأ ما حاول في وقت لاحق',
-                            toastLength: Toast.LENGTH_LONG,
-                            gravity: ToastGravity.CENTER,
-                            backgroundColor: Colors.red,
-                          );}
-                      },
-                    child: ElevatedButton(
-                      onPressed: () {
-                        AppCubit.get(context).makeReportStudent(
-                            content: {
-                              "name" : _nameController.text,
-                              "title arabic" : _subjectEnController.text,
-                              "title english" : _subjectArController.text,
-                                 "department" : selectedValue,
-                            },
-                            type: '$selectedTypeValue',
-                            date: DateTime.now().toString(),);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0XFF57B4D7).withOpacity(0.8),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        minimumSize: const Size(double.infinity, 50.0),
-                      ),
-                      child: const Text(
-                        "ارسال الطلب",
-                        style: TextStyle(
-                            fontSize: 22.0,
+                      const SizedBox(height: 8.0),
+                      const Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "وتفضلوا بقبول وافر الشكر والتقدير،،،",
+                          style: TextStyle(
                             fontWeight: FontWeight.w500,
-                            color: Colors.black),
+                            fontSize: 18.0,
+                          ),
+                        ),
                       ),
-                    ),
-                                      ),),
-                  const SizedBox(height: 22.0),
-                ],
+                      const SizedBox(height: 18.0),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            AppCubit.get(context).makeReportStudent(
+                              content: {
+                                "name" : _nameController.text,
+                                "title arabic" : _subjectEnController.text,
+                                "title english" : _subjectArController.text,
+                                "department" : selectedValue,
+                              },
+                              type: '$selectedTypeValue',
+                              date: DateTime.now().toString(),);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0XFF57B4D7).withOpacity(0.8),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            minimumSize: const Size(double.infinity, 50.0),
+                          ),
+                          child: const Text(
+                            "ارسال الطلب",
+                            style: TextStyle(
+                                fontSize: 22.0,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black),
+                          ),
+                        ),),
+                      const SizedBox(height: 22.0),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );

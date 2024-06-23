@@ -6,7 +6,7 @@ class ApiHelper {
   static init() {
     dio = Dio(
       BaseOptions(
-        baseUrl: 'https://527d-197-165-157-42.ngrok-free.app/api/',
+        baseUrl: 'https://159b-197-160-227-244.ngrok-free.app/api/',
         receiveDataWhenStatusError: true,
       ),
     );
