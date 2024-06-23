@@ -43,3 +43,9 @@ class EnrollCourseLoading extends AppStates{}
 class EnrollCourseSuccess extends AppStates{}
 
 class EnrollCourseError extends AppStates{}
+
+class MakeReportLoading extends AppStates{}
+
+class MakeReportSuccess extends AppStates{}
+
+class MakeReportError extends AppStates{}

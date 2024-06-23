@@ -168,4 +168,28 @@ class AppCubit extends Cubit<AppStates> {
       print('ERRROROROROROR');
     });
   }
+
+
+  Future<void> makeReportStudent({required content ,required String type ,required String date }) async{
+    emit(MakeReportLoading());
+
+    String? token = await CacheHelper.getData(key: "token");
+
+    return ApiHelper.postData(
+      url: "makereportstudent",
+      token: token,
+      data: {
+        "content": "$content",
+        "type": "$type",
+        "date": "$date",
+      },
+    ).then((value) {
+      emit(MakeReportSuccess());
+      print('سجلت نقطه البحث يا نجم');
+    }).catchError((onError) {
+      emit(MakeReportError());
+      print(onError.toString());
+      print('ERRROROROROROR');
+    });
+  }
 }
